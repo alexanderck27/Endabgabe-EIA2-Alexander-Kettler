@@ -1,6 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const drawables_1 = require("./drawables");
 var Eisdiele;
 (function (Eisdiele) {
     window.addEventListener("load", handleLoad);
@@ -11,19 +9,25 @@ var Eisdiele;
             return;
         Eisdiele.crc2 = canvas.getContext("2d");
         canvas.addEventListener("click", handleClick);
-        generateContent(); // Diese Funktion muss definiert werden
-        (0, drawables_1.drawBackground)();
+        generateContent();
+        drawBackground();
         setInterval(animate, 40);
     }
+    function generateContent() {
+        // Implementierung der Logik zur Inhaltsinitialisierung
+    }
     function animate() {
-        (0, drawables_1.drawBackground)();
-        for (let object of Eisdiele.allObjects) {
-            object.update();
-            object.draw();
+        drawBackground(); // Hintergrund zeichnen
+        for (let object of Eisdiele.allObjects) { // Schleife über alle Objekte
+            object.update(); // Objekt updaten
+            object.draw(); // Objekt zeichnen
         }
     }
     function handleClick(_event) {
-        console.log("canvas is clicked");
+        console.log("canvas is clicked"); // Konsolenausgabe 
+    }
+    function drawBackground() {
+        // Implementierung der Logik zum Zeichnen des Hintergrunds
     }
 })(Eisdiele || (Eisdiele = {}));
 //# sourceMappingURL=main.js.map
