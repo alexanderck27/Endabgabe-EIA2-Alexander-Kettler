@@ -1,4 +1,5 @@
 
+namespace Eisdiele {
 export class Moveable {
     position: Vector;
     velocity: Vector;
@@ -27,4 +28,4 @@ class Vector {
         this.y += other.y;
     }
 }
-
+}

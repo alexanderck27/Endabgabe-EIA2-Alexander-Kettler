@@ -1,3 +1,4 @@
+namespace Eisdiele {
 class IceCream {
     flavor: string;
     color: string;
@@ -50,4 +51,5 @@ class Vector {
         this.x = x;
         this.y = y;
     }
+}
 }

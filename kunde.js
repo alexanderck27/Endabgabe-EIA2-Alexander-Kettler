@@ -1,37 +1,55 @@
 "use strict";
-class Customer extends Moveable {
-    order; // Bestellung
-    mood; // Stimmung
-    moodTimer; // Timer für Stimmung
-    constructor(_position, _velocity) {
-        super(_position, _velocity);
-        this.order = this.generateOrder();
-        this.mood = "happy"; // Initiale Stimmung
-        this.moodTimer = 0; // Timer, um die Stimmung zu verfolgen
-    }
-    generateOrder() {
-        let orderSize = getRandomInt(1, 3);
-        let order = [];
-        for (let i = 0; i < orderSize; i++) {
-            let flavorIndex = getRandomInt(0, IceCream.flavors.length - 1);
-            let flavor = IceCream.flavors[flavorIndex].flavor;
-            let color = IceCream.flavors[flavorIndex].color;
-            order.push(new IceCream(flavor, color));
+var Eisdiele;
+(function (Eisdiele) {
+    class Customer extends Eisdiele.Moveable {
+        order; // Bestellung
+        mood; // Stimmung
+        moodTimer; // Timer für Stimmung
+        constructor(_position, _velocity) {
+            super(_position, _velocity); // Aufruf des Konstruktors der Elternklasse
+            this.order = this.generateOrder(); // Bestellung generieren
+            this.mood = "happy"; // Initiale Stimmung
+            this.moodTimer = 0; // Timer, um die Stimmung zu verfolgen
         }
-        return order;
-    }
-    updateMood() {
-        this.moodTimer++;
-        if (this.moodTimer > 300) { // Beispiel-Zeitspanne für Stimmungswechsel
-            if (this.mood === "happy") {
-                this.mood = "neutral";
+        generateOrder() {
+            let orderSize = getRandomInt(1, 3); // Zufällige Anzahl von Kugeln 
+            let order = []; // Array für die Bestellung
+            for (let i = 0; i < orderSize; i++) { // Schleife über die Anzahl der Kugeln
+                let flavorIndex = getRandomInt(0, IceCream.flavors.length - 1); // Zufälliger Index für Geschmack
+                let flavor = IceCream.flavors[flavorIndex].flavor; // Geschmack
+                let color = IceCream.flavors[flavorIndex].color; // Farbe 
+                order.push(new IceCream(flavor, color)); // Kugel hinzufügen
             }
-            else if (this.mood === "neutral") {
-                this.mood = "angry";
+            return order;
+        }
+        updateMood() {
+            this.moodTimer++; // Timer erhöhen
+            if (this.moodTimer > 300) { // Beispiel-Zeitspanne für Stimmungswechsel
+                if (this.mood === "happy") { // Wenn die Stimmung glücklich ist
+                    this.mood = "neutral"; // Stimmung auf neutral setzen
+                }
+                else if (this.mood === "neutral") { // Wenn die Stimmung neutral ist
+                    this.mood = "angry"; // Stimmung auf wütend setzen
+                }
             }
         }
     }
-}
+    Eisdiele.Customer = Customer;
+    class IceCream {
+        static flavors = [{ flavor: "Vanilla", color: "Yellow" }, { flavor: "Chocolate", color: "Brown" }]; // Geschmacksrichtungen
+        flavor; // Geschmack
+        color; // Farbe
+        constructor(flavor, color) {
+            this.flavor = flavor; // Geschmack setzen
+            this.color = color; // Farbe setzen
+        }
+    }
+    Eisdiele.IceCream = IceCream;
+    function getRandomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+    Eisdiele.getRandomInt = getRandomInt;
+})(Eisdiele || (Eisdiele = {}));
 let crc2;
 let allObjects = []; // Array für alle Objekte
 class Smiley {
@@ -70,6 +88,6 @@ function drawAll() {
 function getRandomInt(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+    return Math.floor(Math.random() * (max - min + 1)) + min; // Der maximale Wert ist inklusive, der minimale nicht
 }
 //# sourceMappingURL=kunde.js.map

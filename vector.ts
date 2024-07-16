@@ -1,3 +1,4 @@
+namespace Eisdiele {
 export class Vector {
     constructor(public x: number, public y: number) {}
 
@@ -9,4 +10,5 @@ export class Vector {
     scale(factor: number): Vector {
         return new Vector(this.x * factor, this.y * factor);
     }
+}
 }
