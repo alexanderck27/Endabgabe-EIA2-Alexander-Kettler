@@ -9,21 +9,10 @@ var Eisdiele;
             this.velocity = velocity;
         }
         move() {
-            this.position.add(this.velocity);
+            this.position.x += this.velocity.x;
+            this.position.y += this.velocity.y;
         }
     }
     Eisdiele.Moveable = Moveable;
-    class Vector {
-        x;
-        y;
-        constructor(x, y) {
-            this.x = x;
-            this.y = y;
-        }
-        add(other) {
-            this.x += other.x;
-            this.y += other.y;
-        }
-    }
 })(Eisdiele || (Eisdiele = {}));
 //# sourceMappingURL=Moveable.js.map

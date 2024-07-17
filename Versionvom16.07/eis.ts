@@ -1,4 +1,5 @@
 namespace Eisdiele {
+    
 class IceCream {
     flavor: string;
     color: string;
