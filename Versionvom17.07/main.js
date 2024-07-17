@@ -12,7 +12,7 @@ var Eisdiele;
         canvas.addEventListener("click", handleCanvasClick); // Event-Handler für Klicks auf den Canvas
     });
     function startGame() {
-        setInterval(gameLoop, 1000 / 40); // 1 FPS Game Loop
+        setInterval(gameLoop, 1000 / 40); // 40 FPS Game Loop
         setInterval(spawnCustomer, 5000); // Spawn every 1 seconds for testing
     }
     function gameLoop() {
@@ -21,7 +21,7 @@ var Eisdiele;
         updateCustomers(); // Update and draw customers
     }
     function spawnCustomer() {
-        const newCustomer = new Eisdiele.Kunde({ x: crc2.canvas.width, y: crc2.canvas.height / 2 }, { x: 10, y: 10 }, crc2.canvas.width, crc2.canvas.height); // Startet rechts
+        const newCustomer = new Eisdiele.Kunde({ x: crc2.canvas.width, y: crc2.canvas.height / 2 }, { x: 10, y: 0 }, crc2.canvas.width, crc2.canvas.height); // Startet rechts
         allCustomers.push(newCustomer); // Fügt den Kunden zur Liste hinzu
         newCustomer.draw(crc2); // Zeichne den Kunden
     }

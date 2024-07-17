@@ -13,7 +13,7 @@ namespace Eisdiele {
     });
 
     function startGame(): void {          // Startet das Spiel
-        setInterval(gameLoop, 1000 / 40); // 1 FPS Game Loop
+        setInterval(gameLoop, 1000 / 40); // 40 FPS Game Loop
         setInterval(spawnCustomer, 5000); // Spawn every 1 seconds for testing
     }
 
@@ -24,7 +24,7 @@ namespace Eisdiele {
     }
 
     function spawnCustomer(): void { // Spawnt einen neuen Kunden
-        const newCustomer = new Kunde({ x: crc2.canvas.width, y: crc2.canvas.height / 2 }, { x: 10, y: 10 }, crc2.canvas.width, crc2.canvas.height); // Startet rechts
+        const newCustomer = new Kunde({ x: crc2.canvas.width, y: crc2.canvas.height / 2 }, { x: 10, y: 0 }, crc2.canvas.width, crc2.canvas.height); // Startet rechts
         allCustomers.push(newCustomer); // Fügt den Kunden zur Liste hinzu
         newCustomer.draw(crc2);                // Zeichne den Kunden
     }
