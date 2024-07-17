@@ -1,118 +1,144 @@
-/// <reference path="Moveable.ts" />
 namespace Eisdiele {
-    export class Kunde extends Moveable {
-        private order: string[] = [];
-        private waitingTime: number = 0;
-        private state: "entering" | "waiting" | "ordering" | "seating" | "eating" | "paying" | "leaving" = "entering";
-        private smileyColor: string = "green";
-        private target: { x: number, y: number };
+    export class Kunde extends Moveable { // Klasse für Kunden
+        private order: string[] = [];     // Bestellung des Kunden
+        private waitingTime: number = 0;  // Wartezeit des Kunden
+        private state: "entering" | "waiting" | "ordering" | "seating" | "eating" | "paying" | "leaving" = "entering"; // Zustand des Kunden
+        private smileyColor: string = "green"; // Farbe des Smileys
+        private target: { x: number, y: number }; // Ziel des Kunden
 
-        constructor(position: { x: number, y: number }, velocity: { x: number, y: number }, private canvasWidth: number, private canvasHeight: number) {
-            super(position, velocity);
-            this.target = { x: canvasWidth / 2, y: canvasHeight / 2 }; // Ziel ist die Mitte des Canvas
+        constructor(position: { x: number, y: number }, velocity: { x: number, y: number }, private canvasWidth: number, private canvasHeight: number) { // Konstruktor
+            super(position, velocity);  // Konstruktor der Elternklasse aufrufen
+            this.target = { x: canvasWidth / 1.7, y: canvasHeight / 2 }; // Ziel ist die Mitte des Canvas
         }
 
-        public draw(crc2: CanvasRenderingContext2D): void {
-            crc2.save();
-            crc2.beginPath();
-            crc2.arc(this.position.x, this.position.y, 20, 0, 2 * Math.PI);
-            crc2.fillStyle = this.smileyColor;
-            crc2.fill();
-            crc2.stroke();
-            crc2.restore();
+        public draw(crc2: CanvasRenderingContext2D): void { // Zeichnet den Kunden
+            crc2.save(); // Aktuellen Zustand speichern
+            crc2.beginPath(); // Neuer Pfad
+            crc2.arc(this.position.x, this.position.y, 50, 0, 2 * Math.PI); // Kopf
+            crc2.fillStyle = this.smileyColor; // Smiley-Farbe
+            crc2.fill(); // Kopf füllen
+            crc2.stroke(); // Kopf umranden
+            crc2.closePath(); // Pfad schließen
+
+            crc2.beginPath(); // Neuer Pfad
+            crc2.arc(this.position.x - 15, this.position.y - 10, 5, 0, 2 * Math.PI); // Linkes Auge
+            crc2.fillStyle = "black"; // Augenfarbe
+            crc2.fill(); // Auge füllen
+            crc2.closePath(); // Pfad schließen
+
+            crc2.beginPath(); // Neuer Pfad
+            crc2.arc(this.position.x + 15, this.position.y - 10, 5, 0, 2 * Math.PI); // Rechtes Auge
+            crc2.fillStyle = "black"; // Augenfarbe
+            crc2.fill(); // Auge füllen
+            crc2.closePath(); // Pfad schließen
+
+            crc2.beginPath(); // Neuer Pfad
+            crc2.arc(this.position.x, this.position.y + 10, 20, 0, Math.PI, false); // Lächelnder Mund
+            crc2.fillStyle = "black"; // Augenfarbe
+            crc2.fill(); // Auge füllen
+            crc2.closePath(); // Pfad schließen
+
+            crc2.restore(); // Gespeicherten Zustand wiederherstellen
         }
 
-        public update(allCustomers: Kunde[]): void {
-            if (this.state === "entering" || this.state === "seating" || this.state === "leaving") {
-                this.moveTowardsTarget(allCustomers);
+        public update(allCustomers: Kunde[]): void {                                                  // Updated den Kunden
+            if (this.state === "entering" || this.state === "seating" || this.state === "leaving") {  // Bewegt den Kunden zum Ziel
+                this.moveTowardsTarget(allCustomers);                                                 // wenn er sich bewegen soll
             }
-            this.updateSmiley();
+            this.updateSmiley(); // Aktualisiert die Farbe des Smileys
         }
 
-        private moveTowardsTarget(allCustomers: Kunde[]): void {
-            const dx = this.target.x - this.position.x;
-            const dy = this.target.y - this.position.y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
+        private moveTowardsTarget(allCustomers: Kunde[]): void { // Bewegt den Kunden zum Ziel
+            const dx = this.target.x - this.position.x;          // Differenz in X
+            const dy = this.target.y - this.position.y;          // Differenz in Y
+            const distance = Math.sqrt(dx * dx + dy * dy);       // Distanz zum Ziel
+            console.log(distance);
+            console.log(this.velocity);
 
-            if (distance > 1) {
-                this.position.x += (dx / distance) * this.velocity.x;
-                this.position.y += (dy / distance) * this.velocity.y;
-            } else {
-                this.velocity.x = 0;
-                this.velocity.y = 0;
+            if (distance > 1) {                                        // Wenn der Kunde noch nicht am Ziel ist
+                this.position.x += (dx / distance) * this.velocity.x;  // Bewege den Kunden in X-Richtung
+                this.position.y += (dy / distance) * this.velocity.y;  // Bewege den Kunden in Y-Richtung
+            } else {                 // Wenn der Kunde am Ziel ist
+                this.velocity.x = 0; // Wenn der Kunde am Ziel ist, stoppe x die Bewegung
+                this.velocity.y = 0; // Wenn der Kunde am Ziel ist, stoppe y die Bewegung
 
-                if (this.state === "entering") {
-                    this.state = "waiting";
-                } else if (this.state === "seating") {
-                    this.state = "eating";
+                if (this.state === "entering") {                      // Wenn der Kunde gerade hereinkommt
+                    this.state = "waiting";                           // Ändere den Zustand in "waiting"
+                    
+                } else if (this.state === "seating") {                // Wenn der Kunde gerade sitzt
+                    this.state = "eating";                            // Ändere den Zustand in "eating"
                     setTimeout(() => this.setState("paying"), 20000); // 20 Sekunden essen
-                } else if (this.state === "leaving") {
-                    const index = allCustomers.indexOf(this);
-                    if (index > -1) {
-                        allCustomers.splice(index, 1); // Entfernt den Kunden aus der Liste
+
+                } else if (this.state === "leaving") {                // Wenn der Kunde gerade geht
+                    const index = allCustomers.indexOf(this);         // Finde den Index des Kunden in der Liste
+                    if (index > -1) {                                 // Wenn der Kunde in der Liste ist
+                        allCustomers.splice(index, 1);                // Entfernt den Kunden aus der Liste
                     }
                 }
             }
         }
 
-        private updateSmiley(): void {
-            if (this.waitingTime > 40) {
-                this.smileyColor = "red";
-            } else if (this.waitingTime > 20) {
-                this.smileyColor = "yellow";
-            } else {
-                this.smileyColor = "green";
+        private updateSmiley(): void {            // Aktualisiert die Farbe des Smileys
+            if (this.waitingTime > 40) {          // Wenn die Wartezeit zu lang ist
+                this.smileyColor = "red";         // Ändere die Farbe des Smileys in Rot
+            } else if (this.waitingTime > 20) {   // Wenn die Wartezeit lang ist
+                this.smileyColor = "yellow";      // Ändere die Farbe des Smileys in Gelb
+            } else {                              // Wenn die Wartezeit kurz ist
+                this.smileyColor = "green";       // Ändere die Farbe des Smileys in Grün
             }
         }
 
-        public setState(newState: "entering" | "waiting" | "ordering" | "seating" | "eating" | "paying" | "leaving"): void {
-            this.state = newState;
-            if (newState === "seating") {
-                this.target = this.findFreeChair();
-                this.velocity = { x: 2, y: 2 };
-            } else if (newState === "paying") {
-                this.target = { x: 900, y: 880 }; // Position der Registrierkasse
-                this.velocity = { x: 2, y: 2 };
-            } else if (newState === "leaving") {
-                this.target = { x: this.canvasWidth, y: this.canvasHeight / 2 }; // Ausgang
-                this.velocity = { x: 2, y: 0 };
+        public setState(newState: "entering" | "waiting" | "ordering" | "seating" | "eating" | "paying" | "leaving"): void { // Ändert den Zustand des Kunden
+            this.state = newState;                  // Setzt den Zustand auf den neuen Zustand
+            if (newState === "seating") {           // Wenn der Kunde sich setzt
+                this.target = this.findFreeChair(); // Suche einen freien Stuhl
+                this.velocity = { x: 2, y: 2 };     // Setze die Geschwindigkeit
+
+            } else if (newState === "paying") {     // Wenn der Kunde bezahlt
+                this.target = { x: 900, y: 880 };   // Position der Registrierkasse
+                this.velocity = { x: 2, y: 2 };     // Setze die Geschwindigkeit
+
+            } else if (newState === "leaving") {    // Wenn der Kunde geht
+                this.target = { x: 2000, y: this.canvasHeight / 2 }; // Ausgang
+                this.velocity = { x: 2, y: 2 };     // Setze die Geschwindigkeit
             }
         }
 
-        public generateOrder(): void {
-            const iceCreamFlavors = ["Schokolade", "Himbeere", "Zitrone", "Mango"];
-            const numScoops = Math.floor(Math.random() * 3) + 1;
-            this.order = [];
-            for (let i = 0; i < numScoops; i++) {
-                const randomFlavor = iceCreamFlavors[Math.floor(Math.random() * iceCreamFlavors.length)];
-                this.order.push(randomFlavor);
+        public generateOrder(): void {                                              // Generiert eine zufällige Bestellung
+            const iceCreamFlavors = ["Schokolade", "Himbeere", "Zitrone", "Mango"]; // Eiscreme-Sorten
+            const numScoops = Math.floor(Math.random() * 3) + 1;                    // Zufällige Anzahl von Kugeln
+            this.order = [];                                                        // Leere Bestellung
+            for (let i = 0; i < numScoops; i++) {                                   // Füge zufällige Sorten hinzu
+                const randomFlavor = iceCreamFlavors[Math.floor(Math.random() * iceCreamFlavors.length)]; // Zufällige Sorte
+                this.order.push(randomFlavor);                                      // Füge die Sorte zur Bestellung hinzu
             }
         }
 
-        public getOrder(): string[] {
-            return this.order;
+        public getOrder(): string[] { // Gibt die Bestellung des Kunden zurück
+            return this.order;        // Gibt die Bestellung zurück
         }
 
-        public incrementWaitingTime(): void {
-            this.waitingTime++;
+        public incrementWaitingTime(): void { // Erhöht die Wartezeit
+            this.waitingTime++;               // Erhöht die Wartezeit um 1
         }
 
-        public getState(): "entering" | "waiting" | "ordering" | "seating" | "eating" | "paying" | "leaving" {
-            return this.state;
+        public getState(): "entering" | "waiting" | "ordering" | "seating" | "eating" | "paying" | "leaving" { // Gibt den Zustand des Kunden zurück
+            return this.state; // Gibt den Zustand zurück
         }
 
-        public getPosition(): { x: number, y: number } {
-            return this.position;
+        public getPosition(): { x: number, y: number } { // Gibt die Position des Kunden zurück
+            return this.position; // Gibt die Position zurück
         }
 
-        private findFreeChair(): { x: number, y: number } {
-            const chairs = [
-                { x: 1540, y: 280 },
-                { x: 1520, y: 630 },
-                { x: 1380, y: 130 },
-                { x: 1375, y: 800 },
+        private findFreeChair(): { x: number, y: number } { // Sucht einen freien Stuhl
+            const chairs = [ // Liste von Stühlen
+                { x: 1560, y: 300 }, // Positionen des 1. Stuhls
+                { x: 1540, y: 650 }, // Positionen des 2. Stuhls
+                { x: 1400, y: 150 }, // Positionen des 3. Stuhls
+                { x: 1395, y: 820 }, // Positionen des 4. Stuhls
+                { x: 1695, y: 820 }, // Positionen des 5. Stuhls
             ];
-            return chairs[Math.floor(Math.random() * chairs.length)];
+            return chairs[Math.floor(Math.random() * chairs.length)]; // Zufälligen Stuhl zurückgeben
         }
     }
 }
