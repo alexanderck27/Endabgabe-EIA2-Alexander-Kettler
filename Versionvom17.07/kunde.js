@@ -11,6 +11,7 @@ var Eisdiele;
         target; // Ziel des Kunden
         static customerQueue = []; // Warteschlange für Kunden
         moodInterval; // Timer für den Stimmungswechsel
+        hasGeneratedOrder = false; // Flag um zu prüfen, ob die Bestellung generiert wurde
         constructor(position, velocity, canvasWidth, canvasHeight) {
             super(position, velocity); // Konstruktor der Elternklasse aufrufen
             this.canvasWidth = canvasWidth;
@@ -43,6 +44,31 @@ var Eisdiele;
             crc2.stroke(); // Mund umranden
             crc2.closePath(); // Pfad schließen
             crc2.restore(); // Gespeicherten Zustand wiederherstellen
+            if (this.state === "waiting") {
+                this.drawOrder(crc2); // Zeichne die Bestellung, wenn der Kunde wartet
+            }
+        }
+        drawOrder(crc2) {
+            const startX = 150; // Startposition X des Grids
+            const startY = 190; // Startposition Y des Grids
+            const rectWidth = 200; // Breite jedes Kästchens
+            const rectHeight = 200; // Höhe jedes Kästchens
+            const spacing = 10; // Abstand zwischen den Kästchen
+            crc2.save(); // Speichert den aktuellen Zustand des Canvas
+            for (let i = 0; i < this.order.length; i++) {
+                const color = this.order[i];
+                const x = startX;
+                const y = startY + i * (rectHeight + spacing);
+                crc2.fillStyle = color;
+                crc2.fillRect(x, y, rectWidth, rectHeight);
+                crc2.strokeStyle = "black";
+                crc2.lineWidth = 2;
+                crc2.strokeRect(x, y, rectWidth, rectHeight);
+                crc2.fillStyle = "black";
+                crc2.font = "30px Arial";
+                crc2.fillText(`Eis ${i + 1}`, x + rectWidth / 2, y + rectHeight / 2);
+            }
+            crc2.restore(); // Stellt den gespeicherten Zustand des Canvas wieder her
         }
         update(allCustomers) {
             if (this.state === "entering" || this.state === "seating" || this.state === "leaving" || (this.state === "paying" && this.position.x !== this.target.x && this.position.y !== this.target.y)) { // Bewegt den Kunden zum Ziel
@@ -61,8 +87,10 @@ var Eisdiele;
             else { // Wenn der Kunde am Ziel ist
                 this.velocity.x = 0; // Wenn der Kunde am Ziel ist, stoppe x die Bewegung
                 this.velocity.y = 0; // Wenn der Kunde am Ziel ist, stoppe y die Bewegung
-                if (this.state === "entering") { // Wenn der Kunde gerade hereinkommt
+                if (this.state === "entering" && !this.hasGeneratedOrder) { // Wenn der Kunde gerade hereinkommt und die Bestellung noch nicht generiert wurde
                     this.state = "waiting"; // Ändere den Zustand in "waiting"
+                    this.generateOrder(); // Generiere die Bestellung
+                    this.hasGeneratedOrder = true; // Setze das Flag auf true
                 }
                 else if (this.state === "seating") { // Wenn der Kunde gerade sitzt
                     this.state = "eating"; // Ändere den Zustand in "eating"
@@ -107,12 +135,12 @@ var Eisdiele;
             }
         }
         generateOrder() {
-            const iceCreamFlavors = ["Schokolade", "Himbeere", "Zitrone", "Mango"]; // Eiscreme-Sorten
+            const iceCreamColors = ["#FFC0CB", "#FFD700", "#ADD8E6", "#90EE90"]; // Farben der Eissorten
             const numScoops = Math.floor(Math.random() * 3) + 1; // Zufällige Anzahl von Kugeln
             this.order = []; // Leere Bestellung
             for (let i = 0; i < numScoops; i++) { // Füge zufällige Sorten hinzu
-                const randomFlavor = iceCreamFlavors[Math.floor(Math.random() * iceCreamFlavors.length)]; // Zufällige Sorte
-                this.order.push(randomFlavor); // Füge die Sorte zur Bestellung hinzu
+                const randomColor = iceCreamColors[Math.floor(Math.random() * iceCreamColors.length)]; // Zufällige Farbe
+                this.order.push(randomColor); // Füge die Farbe zur Bestellung hinzu
             }
         }
         getOrder() {
@@ -122,10 +150,10 @@ var Eisdiele;
             this.waitingTime++; // Erhöht die Wartezeit um 1
             this.updateSmiley(); // Aktualisiert die Farbe des Smileys
         }
-        // public resetMood(): void { // Setzt die Wartezeit zurück und ändert die Farbe zu Grün
-        //     this.waitingTime = 0;
-        //     this.smileyColor = "green";
-        // }
+        resetMood() {
+            this.waitingTime = 0;
+            this.smileyColor = "green";
+        }
         getState() {
             return this.state; // Gibt den Zustand zurück
         }
@@ -145,7 +173,7 @@ var Eisdiele;
         startMoodTimer() {
             this.moodInterval = setInterval(() => {
                 this.incrementWaitingTime(); // Erhöht die Wartezeit um 1
-            }, 500); // Alle 10 Sekunden
+            }, 10000); // Alle 10 Sekunden
         }
         stopMoodTimer() {
             clearInterval(this.moodInterval);
