@@ -9,6 +9,9 @@ namespace Eisdiele {
         private moodInterval: any; // Timer für den Stimmungswechsel
         private hasGeneratedOrder: boolean = false; // Flag um zu prüfen, ob die Bestellung generiert wurde
 
+        private static selectedOrder: string[] = []; // Temporäre Bestellung, die vom Benutzer ausgewählt wird
+        private static orderConfirmed: boolean = false; // Flag, um zu prüfen, ob die Bestellung bestätigt wurde
+
         constructor(position: { x: number, y: number }, velocity: { x: number, y: number }, private canvasWidth: number, private canvasHeight: number) {
             super(position, velocity);
             this.target = { x: canvasWidth / 1.7, y: canvasHeight / 2 };
@@ -49,6 +52,9 @@ namespace Eisdiele {
             if (this.state === "waiting") {
                 this.drawOrder(crc2); // Zeichne die Bestellung, wenn der Kunde wartet
             }
+
+            // Zeichne die temporäre Bestellung im Grid
+            this.drawSelectedOrder(crc2);
         }
 
         private drawOrder(crc2: CanvasRenderingContext2D): void {  // Zeichnet die Bestellung des Kunden 
@@ -93,11 +99,40 @@ namespace Eisdiele {
             crc2.restore();
         }
 
+        private drawSelectedOrder(crc2: CanvasRenderingContext2D): void {
+            const startX = 360; // Start X für die rechte Spalte
+            const startY = 190 + 2 * (200 + 10); // Von unten anfangen zu zeichnen
+            const rectWidth = 200;
+            const rectHeight = 200;
+            const spacing = 10;
+
+            crc2.save();
+            for (let i = 0; i < Kunde.selectedOrder.length; i++) {
+                const color = Kunde.selectedOrder[i];
+                const x = startX;
+                const y = startY - i * (rectHeight + spacing);
+
+                crc2.fillStyle = color;
+                crc2.fillRect(x, y, rectWidth, rectHeight);
+                crc2.strokeStyle = "black";
+                crc2.lineWidth = 2;
+                crc2.strokeRect(x, y, rectWidth, rectHeight);
+            }
+            crc2.restore();
+        }
+
         public update(allCustomers: Kunde[]): void {
             if (this.state === "entering" || this.state === "seating" || this.state === "leaving" || (this.state === "paying" && this.position.x !== this.target.x && this.position.y !== this.target.y)) {
                 this.moveTowardsTarget(allCustomers);
             }
             this.updateSmiley();
+
+            // Überprüfe, ob die Bestellung bestätigt wurde und ändere den Zustand entsprechend
+            if (this.state === "waiting" && Kunde.orderConfirmed) {
+                this.setState("seating");
+                Kunde.orderConfirmed = false;
+                Kunde.selectedOrder = [];
+            }
         }
 
         private moveTowardsTarget(allCustomers: Kunde[]): void {
@@ -212,5 +247,49 @@ namespace Eisdiele {
         private stopMoodTimer(): void { // Stoppt den Timer für den Stimmungswechsel
             clearInterval(this.moodInterval); // Timer stoppen
         }
+
+        // Event-Listener für Klicks auf farbige Boxen und Buttons
+        public static setupEventListeners(): void {
+            const canvas = document.getElementById("myCanvas") as HTMLCanvasElement;
+
+            canvas.addEventListener("click", (event) => {
+                const rect = canvas.getBoundingClientRect();
+                const x = event.clientX - rect.left;
+                const y = event.clientY - rect.top;
+
+                // Überprüfe, ob auf eine der farbigen Boxen geklickt wurde
+                const boxWidth = 100;
+                const boxHeight = 50;
+                const spacing = 10;
+                const startX = 850 + spacing;
+                let startY = 360 + spacing;
+                const iceCreamColors = ["#FFC0CB", "#FFD700", "#ADD8E6", "#90EE90"];
+
+                for (let i = 0; i < iceCreamColors.length; i++) {
+                    if (x > startX && x < startX + boxWidth && y > startY && y < startY + boxHeight) {
+                        if (Kunde.selectedOrder.length < 3) {
+                            Kunde.selectedOrder.push(iceCreamColors[i]);
+                        }
+                    }
+                    startY += boxHeight + spacing;
+                }
+
+                // Überprüfe, ob auf den grünen Kasten (Bestätigen) geklickt wurde
+                const buttonsY = 190 + 3 * (200 + 10) + 20;
+                if (x > 250 && x < 250 + 100 && y > buttonsY && y < buttonsY + 50) {
+                    Kunde.orderConfirmed = true;
+                }
+
+                // Überprüfe, ob auf den roten Kasten (Abbrechen) geklickt wurde
+                if (x > 370 && x < 370 + 100 && y > buttonsY && y < buttonsY + 50) {
+                    Kunde.selectedOrder = [];
+                }
+            });
+        }
     }
+
+    // Event-Listener initialisieren, wenn das Dokument geladen ist
+    document.addEventListener("DOMContentLoaded", () => {
+        Kunde.setupEventListeners();
+    });
 }
