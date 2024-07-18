@@ -8,6 +8,7 @@ namespace Eisdiele {
         private static customerQueue: Kunde[] = []; // Warteschlange für Kunden
         private moodInterval: any; // Timer für den Stimmungswechsel
         private hasGeneratedOrder: boolean = false; // Flag um zu prüfen, ob die Bestellung generiert wurde
+        private static totalEarnings: number = 0; // Gesamteinnahmen
 
         private static selectedOrder: string[] = []; // Temporäre Bestellung, die vom Benutzer ausgewählt wird
         private static orderConfirmed: boolean = false; // Flag, um zu prüfen, ob die Bestellung bestätigt wurde
@@ -55,6 +56,9 @@ namespace Eisdiele {
 
             // Zeichne die temporäre Bestellung im Grid
             this.drawSelectedOrder(crc2);
+
+            // Zeichne den Einnahmenbereich
+            this.drawEarnings(crc2);
         }
 
         private drawOrder(crc2: CanvasRenderingContext2D): void {  // Zeichnet die Bestellung des Kunden 
@@ -121,6 +125,21 @@ namespace Eisdiele {
             crc2.restore();
         }
 
+        private drawEarnings(crc2: CanvasRenderingContext2D): void {
+            const x = 750;
+            const y = 170;
+            const width = 410;
+            const height = 50;
+
+            crc2.save();
+            crc2.fillStyle = "#1B98E0";
+            crc2.fillRect(x, y, width, height);
+            crc2.fillStyle = "black";
+            crc2.font = "30px 'Brush Script MT'";
+            crc2.fillText(`Einnahmen: ${Kunde.totalEarnings}€`, x + 10, y + 35);
+            crc2.restore();
+        }
+
         public update(allCustomers: Kunde[]): void {
             if (this.state === "entering" || this.state === "seating" || this.state === "leaving" || (this.state === "paying" && this.position.x !== this.target.x && this.position.y !== this.target.y)) {
                 this.moveTowardsTarget(allCustomers);
@@ -129,9 +148,14 @@ namespace Eisdiele {
 
             // Überprüfe, ob die Bestellung bestätigt wurde und ändere den Zustand entsprechend
             if (this.state === "waiting" && Kunde.orderConfirmed) {
-                this.setState("seating");
-                Kunde.orderConfirmed = false;
-                Kunde.selectedOrder = [];
+                if (this.isOrderMatching()) {
+                    this.setState("seating");
+                    Kunde.orderConfirmed = false;
+                    Kunde.selectedOrder = [];
+                } else {
+                    Kunde.orderConfirmed = false;
+                    this.showGameOverAlert();
+                }
             }
         }
 
@@ -241,11 +265,28 @@ namespace Eisdiele {
         private startMoodTimer(): void { // Startet den Timer für den Stimmungswechsel
             this.moodInterval = setInterval(() => { // Alle xxxx Millisekunden
                 this.incrementWaitingTime(); // Inkrementiere die Wartezeit
-            }, 1000); // Alle xxxx Frames
+            }, 5000); // Alle xxxx Frames
         }
 
         private stopMoodTimer(): void { // Stoppt den Timer für den Stimmungswechsel
             clearInterval(this.moodInterval); // Timer stoppen
+        }
+
+        private isOrderMatching(): boolean {
+            if (this.order.length !== Kunde.selectedOrder.length) {
+                return false;
+            }
+            for (let i = 0; i < this.order.length; i++) {
+                if (this.order[i] !== Kunde.selectedOrder[i]) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private showGameOverAlert(): void {
+            alert("Die Bestellung war falsch! Der Kunde ist gegangen! Starte von vorne.");
+            location.reload(); // Spiel neu starten
         }
 
         // Event-Listener für Klicks auf farbige Boxen und Buttons
@@ -284,7 +325,21 @@ namespace Eisdiele {
                 if (x > 370 && x < 370 + 100 && y > buttonsY && y < buttonsY + 50) {
                     Kunde.selectedOrder = [];
                 }
+
+                // Überprüfe, ob auf einen Smiley an der Kasse geklickt wurde
+                Kunde.customerQueue.forEach(kunde => {
+                    if (kunde.state === "paying" && x > kunde.position.x - 50 && x < kunde.position.x + 50 && y > kunde.position.y - 50 && y < kunde.position.y + 50) {
+                        kunde.handlePayment();
+                    }
+                });
             });
+        }
+
+        private handlePayment(): void {
+            if (this.smileyColor !== "red") {
+                Kunde.totalEarnings += this.order.length;
+            }
+            this.setState("leaving");
         }
     }
 

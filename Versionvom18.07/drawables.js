@@ -117,7 +117,7 @@ var Eisdiele;
         crc2.fillRect(750, 170, 410, 50); // Zeichnet den Kasten für den Betrag
         crc2.fillStyle = "#000000"; // Setzt die Textfarbe auf Schwarz
         crc2.font = "35px 'Brush Script MT'"; // Setzt die Schriftart und -größe
-        crc2.fillText("1$", 930, 205); // Zeichnet den Betrag
+        crc2.fillText("-", 930, 205); // Zeichnet den Betrag
         crc2.restore(); // Stellt den gespeicherten Zustand des Canvas wieder her
         crc2.save(); // Speichert den aktuellen Zustand des Canvas
         crc2.beginPath(); // Beginnt einen neuen Pfad

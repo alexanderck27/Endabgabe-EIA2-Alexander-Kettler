@@ -12,6 +12,7 @@ var Eisdiele;
         static customerQueue = []; // Warteschlange für Kunden
         moodInterval; // Timer für den Stimmungswechsel
         hasGeneratedOrder = false; // Flag um zu prüfen, ob die Bestellung generiert wurde
+        static totalEarnings = 0; // Gesamteinnahmen
         static selectedOrder = []; // Temporäre Bestellung, die vom Benutzer ausgewählt wird
         static orderConfirmed = false; // Flag, um zu prüfen, ob die Bestellung bestätigt wurde
         constructor(position, velocity, canvasWidth, canvasHeight) {
@@ -51,6 +52,8 @@ var Eisdiele;
             }
             // Zeichne die temporäre Bestellung im Grid
             this.drawSelectedOrder(crc2);
+            // Zeichne den Einnahmenbereich
+            this.drawEarnings(crc2);
         }
         drawOrder(crc2) {
             const startX = 150;
@@ -108,6 +111,19 @@ var Eisdiele;
             }
             crc2.restore();
         }
+        drawEarnings(crc2) {
+            const x = 750;
+            const y = 170;
+            const width = 410;
+            const height = 50;
+            crc2.save();
+            crc2.fillStyle = "#1B98E0";
+            crc2.fillRect(x, y, width, height);
+            crc2.fillStyle = "black";
+            crc2.font = "30px 'Brush Script MT'";
+            crc2.fillText(`Einnahmen: ${Kunde.totalEarnings}€`, x + 10, y + 35);
+            crc2.restore();
+        }
         update(allCustomers) {
             if (this.state === "entering" || this.state === "seating" || this.state === "leaving" || (this.state === "paying" && this.position.x !== this.target.x && this.position.y !== this.target.y)) {
                 this.moveTowardsTarget(allCustomers);
@@ -115,9 +131,15 @@ var Eisdiele;
             this.updateSmiley();
             // Überprüfe, ob die Bestellung bestätigt wurde und ändere den Zustand entsprechend
             if (this.state === "waiting" && Kunde.orderConfirmed) {
-                this.setState("seating");
-                Kunde.orderConfirmed = false;
-                Kunde.selectedOrder = [];
+                if (this.isOrderMatching()) {
+                    this.setState("seating");
+                    Kunde.orderConfirmed = false;
+                    Kunde.selectedOrder = [];
+                }
+                else {
+                    Kunde.orderConfirmed = false;
+                    this.showGameOverAlert();
+                }
             }
         }
         moveTowardsTarget(allCustomers) {
@@ -222,10 +244,25 @@ var Eisdiele;
         startMoodTimer() {
             this.moodInterval = setInterval(() => {
                 this.incrementWaitingTime(); // Inkrementiere die Wartezeit
-            }, 1000); // Alle xxxx Frames
+            }, 5000); // Alle xxxx Frames
         }
         stopMoodTimer() {
             clearInterval(this.moodInterval); // Timer stoppen
+        }
+        isOrderMatching() {
+            if (this.order.length !== Kunde.selectedOrder.length) {
+                return false;
+            }
+            for (let i = 0; i < this.order.length; i++) {
+                if (this.order[i] !== Kunde.selectedOrder[i]) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        showGameOverAlert() {
+            alert("Die Bestellung war falsch! Der Kunde ist gegangen! Starte von vorne.");
+            location.reload(); // Spiel neu starten
         }
         // Event-Listener für Klicks auf farbige Boxen und Buttons
         static setupEventListeners() {
@@ -258,7 +295,19 @@ var Eisdiele;
                 if (x > 370 && x < 370 + 100 && y > buttonsY && y < buttonsY + 50) {
                     Kunde.selectedOrder = [];
                 }
+                // Überprüfe, ob auf einen Smiley an der Kasse geklickt wurde
+                Kunde.customerQueue.forEach(kunde => {
+                    if (kunde.state === "paying" && x > kunde.position.x - 50 && x < kunde.position.x + 50 && y > kunde.position.y - 50 && y < kunde.position.y + 50) {
+                        kunde.handlePayment();
+                    }
+                });
             });
+        }
+        handlePayment() {
+            if (this.smileyColor !== "red") {
+                Kunde.totalEarnings += this.order.length;
+            }
+            this.setState("leaving");
         }
     }
     Eisdiele.Kunde = Kunde;
