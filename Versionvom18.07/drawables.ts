@@ -1,20 +1,20 @@
 namespace Eisdiele {
-    //Interface für alle Objekte, die gezeichnet werden können
+    // Interface für alle Objekte, die gezeichnet werden können
     export interface Drawable {
         draw(crc2: CanvasRenderingContext2D): void; // Zeichnen-Methode, die den Canvas-Kontext als Parameter erhält
     }
 
     // Funktion zum Zeichnen des Hintergrunds
-    export function drawBackground(crc2: CanvasRenderingContext2D): void { 
+    export function drawBackground(crc2: CanvasRenderingContext2D): void {
         crc2.save(); // Speichert den aktuellen Zustand des Canvas
         const size = 50; // Größe eines einzelnen Karos
         const rows = Math.ceil(crc2.canvas.height / size); // Anzahl der Reihen, die benötigt werden, um den Canvas zu füllen
         const cols = Math.ceil(crc2.canvas.width / size); // Anzahl der Spalten, die benötigt werden, um den Canvas zu füllen
 
         // Schleife über alle Reihen
-        for (let row = 0; row < rows; row++) {                                  
+        for (let row = 0; row < rows; row++) {
             // Schleife über alle Spalten
-            for (let col = 0; col < cols; col++) {                              
+            for (let col = 0; col < cols; col++) {
                 crc2.fillStyle = (row + col) % 2 === 0 ? "#ffffff" : "#000000"; // Setzt die Farbe abwechselnd auf Schwarz und Weiß
                 crc2.fillRect(col * size, row * size, size, size); // Zeichnet ein Quadrat
             }
@@ -25,7 +25,7 @@ namespace Eisdiele {
     }
 
     // Funktion zum Zeichnen des Eisladen
-    function drawIceCreamParlor(crc2: CanvasRenderingContext2D): void {  
+    function drawIceCreamParlor(crc2: CanvasRenderingContext2D): void {
         crc2.save(); // Speichert den aktuellen Zustand des Canvas
         crc2.fillStyle = "#8B4513"; // Setzt die Farbe auf Braun
         const borderWidth = 80; // Dicke des Rahmens
@@ -50,8 +50,13 @@ namespace Eisdiele {
         crc2.strokeRect(800, 800, 200, 200); // Zeichnet den Rahmen um den kleineren Tresen
         crc2.restore(); // Stellt den gespeicherten Zustand des Canvas wieder her
 
-        // Farben für die vier Eissorten
-        const colors = ["#FFC0CB", "#FFD700", "#ADD8E6", "#90EE90"]; 
+        // Farben und Bezeichnungen für die vier Eissorten
+        const iceCreams = [
+            { color: "#FFC0CB", label: "Himbeere"},
+            { color: "#FFD700", label: "Mango" },
+            { color: "#ADD8E6", label: "Blaubeere" },
+            { color: "#90EE90", label: "Pistazie" }
+        ];
         const rectWidth = 100; // Breite der Rechtecke
         const rectHeight = 50; // Höhe der Rechtecke
         const spacing = 10; // Abstand zwischen den Rechtecken
@@ -60,8 +65,9 @@ namespace Eisdiele {
 
         crc2.save(); // Speichert den aktuellen Zustand des Canvas
         // Schleife zum Zeichnen der vier Eissorten
-        for (let i = 0; i < colors.length; i++) {
-            crc2.fillStyle = colors[i]; // Setzt die Füllfarbe
+        for (let i = 0; i < iceCreams.length; i++) {
+            const iceCream = iceCreams[i];
+            crc2.fillStyle = iceCream.color; // Setzt die Füllfarbe
             crc2.fillRect(startX, startY, rectWidth, rectHeight); // Zeichnet das Rechteck
 
             crc2.strokeStyle = "black"; // Setzt die Farbe des Rahmens auf Schwarz
@@ -69,13 +75,12 @@ namespace Eisdiele {
             crc2.strokeRect(startX, startY, rectWidth, rectHeight); // Zeichnet den Rahmen
 
             // Text hinzufügen
-            const text = `Eis ${i + 1}`; // Text für jede Box
+            const text = iceCream.label; // Text für jede Box
             crc2.save(); // Speichert den aktuellen Zustand des Canvas
-            crc2.translate(startX + rectWidth / 3.7, startY + rectHeight / 2); // Verschiebt den Ursprung zur Mitte der Box
-            crc2.rotate(-Math.PI / 2); // Dreht um -90 Grad
+            crc2.translate(startX + rectWidth / 2, startY + rectHeight / 2); // Verschiebt den Ursprung zur Mitte der Box
             crc2.textAlign = "center"; // Zentriert den Text
             crc2.fillStyle = "black"; // Setzt die Textfarbe auf Schwarz
-            crc2.font = "15px Arial"; // Setzt die Schriftgröße und -art
+            crc2.font = "30px 'Brush Script MT'"; // Setzt die Schriftgröße und -art
             crc2.fillText(text, 0, 0); // Zeichnet den Text
             crc2.restore(); // Stellt den gespeicherten Zustand des Canvas wieder her
 
@@ -86,9 +91,9 @@ namespace Eisdiele {
         crc2.save(); // Speichert den aktuellen Zustand des Canvas
 
         // Verschiebt den Ursprung zur Mitte der Registrierkasse
-        crc2.translate(900, 880); 
+        crc2.translate(900, 880);
         crc2.rotate(-Math.PI / 2); // Dreht um -90 Grad
-        crc2.translate(-900, -880); 
+        crc2.translate(-900, -880);
 
         crc2.fillStyle = "#696969"; // Setzt die Farbe auf Dunkelgrau
         crc2.fillRect(850, 850, 100, 60); // Zeichnet den Grundkörper der Registrierkasse
@@ -241,8 +246,8 @@ namespace Eisdiele {
         const boxMargin = 10; // Abstand zwischen den Kästchen
 
         // Schleife zum Zeichnen des 2x3 Grids
-        for (let row = 0; row < 3; row++) { 
-            for (let col = 0; col < 2; col++) { 
+        for (let row = 0; row < 3; row++) {
+            for (let col = 0; col < 2; col++) {
                 const x = gridStartX + col * (boxWidth + boxMargin); // Berechnet die x-Position
                 const y = gridStartY + row * (boxHeight + boxMargin); // Berechnet die y-Position
 
@@ -375,7 +380,7 @@ namespace Eisdiele {
     }
 
     // Event-Listener für das DOMContentLoaded-Event
-    document.addEventListener("DOMContentLoaded", () => {                        
+    document.addEventListener("DOMContentLoaded", () => {
         const canvas = document.getElementById("myCanvas") as HTMLCanvasElement; // Canvas-Element abrufen
         const crc2 = canvas.getContext("2d")!; // 2D-Kontext des Canvas-Elements abrufen
         drawScene(crc2); // Szene zeichnen
@@ -384,7 +389,7 @@ namespace Eisdiele {
     const allObjects: any[] = []; // Erstellen eines Arrays für alle zu zeichnenden Objekte
 
     // Funktion zum Zeichnen der Szene
-    function drawScene(crc2: CanvasRenderingContext2D) {                      
+    function drawScene(crc2: CanvasRenderingContext2D) {
         drawBackground(crc2); // Hintergrund zeichnen
         for (const obj of allObjects) { // Schleife über alle Objekte
             obj.draw(crc2); // Objekt zeichnen

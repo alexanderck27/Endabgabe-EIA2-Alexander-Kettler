@@ -40,8 +40,13 @@ var Eisdiele;
         crc2.lineWidth = 10; // Setzt die Dicke des Rahmens
         crc2.strokeRect(800, 800, 200, 200); // Zeichnet den Rahmen um den kleineren Tresen
         crc2.restore(); // Stellt den gespeicherten Zustand des Canvas wieder her
-        // Farben für die vier Eissorten
-        const colors = ["#FFC0CB", "#FFD700", "#ADD8E6", "#90EE90"];
+        // Farben und Bezeichnungen für die vier Eissorten
+        const iceCreams = [
+            { color: "#FFC0CB", label: "Himbeere" },
+            { color: "#FFD700", label: "Mango" },
+            { color: "#ADD8E6", label: "Blaubeere" },
+            { color: "#90EE90", label: "Pistazie" }
+        ];
         const rectWidth = 100; // Breite der Rechtecke
         const rectHeight = 50; // Höhe der Rechtecke
         const spacing = 10; // Abstand zwischen den Rechtecken
@@ -49,20 +54,20 @@ var Eisdiele;
         let startY = 360 + spacing; // Startposition Y
         crc2.save(); // Speichert den aktuellen Zustand des Canvas
         // Schleife zum Zeichnen der vier Eissorten
-        for (let i = 0; i < colors.length; i++) {
-            crc2.fillStyle = colors[i]; // Setzt die Füllfarbe
+        for (let i = 0; i < iceCreams.length; i++) {
+            const iceCream = iceCreams[i];
+            crc2.fillStyle = iceCream.color; // Setzt die Füllfarbe
             crc2.fillRect(startX, startY, rectWidth, rectHeight); // Zeichnet das Rechteck
             crc2.strokeStyle = "black"; // Setzt die Farbe des Rahmens auf Schwarz
             crc2.lineWidth = 2; // Setzt die Dicke des Rahmens
             crc2.strokeRect(startX, startY, rectWidth, rectHeight); // Zeichnet den Rahmen
             // Text hinzufügen
-            const text = `Eis ${i + 1}`; // Text für jede Box
+            const text = iceCream.label; // Text für jede Box
             crc2.save(); // Speichert den aktuellen Zustand des Canvas
-            crc2.translate(startX + rectWidth / 3.7, startY + rectHeight / 2); // Verschiebt den Ursprung zur Mitte der Box
-            crc2.rotate(-Math.PI / 2); // Dreht um -90 Grad
+            crc2.translate(startX + rectWidth / 2, startY + rectHeight / 2); // Verschiebt den Ursprung zur Mitte der Box
             crc2.textAlign = "center"; // Zentriert den Text
             crc2.fillStyle = "black"; // Setzt die Textfarbe auf Schwarz
-            crc2.font = "15px Arial"; // Setzt die Schriftgröße und -art
+            crc2.font = "30px 'Brush Script MT'"; // Setzt die Schriftgröße und -art
             crc2.fillText(text, 0, 0); // Zeichnet den Text
             crc2.restore(); // Stellt den gespeicherten Zustand des Canvas wieder her
             startY += rectHeight + spacing; // Aktualisiert die Y-Position für das nächste Rechteck

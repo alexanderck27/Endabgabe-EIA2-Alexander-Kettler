@@ -51,28 +51,44 @@ namespace Eisdiele {
             }
         }
 
-        private drawOrder(crc2: CanvasRenderingContext2D): void {
+        private drawOrder(crc2: CanvasRenderingContext2D): void {  // Zeichnet die Bestellung des Kunden 
             const startX = 150;
-            const startY = 190;
+            const startY = 190 + (2 * (200 + 10)); // Von unten anfangen zu zeichnen
             const rectWidth = 200;
             const rectHeight = 200;
             const spacing = 10;
 
             crc2.save();
-            for (let i = 0; i < this.order.length; i++) {
-                const color = this.order[i];
-                const x = startX;
-                const y = startY + i * (rectHeight + spacing);
+            for (let i = 0; i < this.order.length; i++) { // Schleife über alle Bestellungen
+                const color = this.order[i]; // Farbe des Eises
+                const x = startX; // X-Position des Rechtecks
+                const y = startY - i * (rectHeight + spacing); // Y-Position des Rechtecks, von unten nach oben
 
-                crc2.fillStyle = color;
-                crc2.fillRect(x, y, rectWidth, rectHeight);
-                crc2.strokeStyle = "black";
-                crc2.lineWidth = 2;
-                crc2.strokeRect(x, y, rectWidth, rectHeight);
+                crc2.fillStyle = color; // Farbe des Eises
+                crc2.fillRect(x, y, rectWidth, rectHeight); // Rechteck füllen      
+                crc2.strokeStyle = "black"; // Randfarbe
+                crc2.lineWidth = 2; // Linienbreite
+                crc2.strokeRect(x, y, rectWidth, rectHeight); // Rechteck
 
-                crc2.fillStyle = "black";
-                crc2.font = "30px Arial";
-                crc2.fillText(`Eis ${i + 1}`, x + rectWidth / 2, y + rectHeight / 2);
+                crc2.fillStyle = "black"; // Text im Bestellfeld
+                crc2.font = "35px 'Brush Script MT'"; // Schriftgröße und -art
+
+                let label = "";
+                switch(color) {
+                    case "#FFC0CB":
+                        label = "Himbeere";
+                        break;
+                    case "#FFD700":
+                        label = "Mango";
+                        break;
+                    case "#ADD8E6":
+                        label = "Blaubeere";
+                        break;
+                    case "#90EE90":
+                        label = "Pistazie";
+                        break;
+                }
+                crc2.fillText(label, x + rectWidth / 4, y + rectHeight / 2);
             }
             crc2.restore();
         }
@@ -140,7 +156,12 @@ namespace Eisdiele {
         }
 
         public generateOrder(): void {
-            const iceCreamColors = ["#FFC0CB", "#FFD700", "#ADD8E6", "#90EE90"];
+            const iceCreamColors = [
+                "#FFC0CB", // Rosa steht für Himbeere
+                "#FFD700", // Gelb steht für Mango
+                "#ADD8E6", // Hellblau steht für Blaubeere
+                "#90EE90"  // Hellgrün steht für Pistazie
+            ]; 
             const numScoops = Math.floor(Math.random() * 3) + 1;
             this.order = [];
             for (let i = 0; i < numScoops; i++) {
@@ -182,14 +203,14 @@ namespace Eisdiele {
             return chairs[Math.floor(Math.random() * chairs.length)];
         }
 
-        private startMoodTimer(): void {
-            this.moodInterval = setInterval(() => {
-                this.incrementWaitingTime();
-            }, 5000); // Alle 5 Sekunden
+        private startMoodTimer(): void { // Startet den Timer für den Stimmungswechsel
+            this.moodInterval = setInterval(() => { // Alle xxxx Millisekunden
+                this.incrementWaitingTime(); // Inkrementiere die Wartezeit
+            }, 1000); // Alle xxxx Frames
         }
 
-        private stopMoodTimer(): void {
-            clearInterval(this.moodInterval);
+        private stopMoodTimer(): void { // Stoppt den Timer für den Stimmungswechsel
+            clearInterval(this.moodInterval); // Timer stoppen
         }
     }
 }
