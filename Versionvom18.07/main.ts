@@ -1,5 +1,5 @@
 namespace Eisdiele {
-    
+
     let crc2: CanvasRenderingContext2D;
     let allCustomers: Kunde[] = [];
     let totalEarnings: number = 0;
@@ -15,7 +15,7 @@ namespace Eisdiele {
 
     function startGame(): void {          // Startet das Spiel
         setInterval(gameLoop, 1000 / 40); // 40 FPS Game Loop
-        setInterval(spawnCustomer, 5000); // Spawn every 1 seconds for testing
+        setInterval(spawnCustomer, 4000); // Spawn zeit
     }
 
     function gameLoop(): void {

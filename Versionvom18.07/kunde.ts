@@ -136,7 +136,7 @@ namespace Eisdiele {
             crc2.fillRect(x, y, width, height);
             crc2.fillStyle = "black";
             crc2.font = "30px 'Brush Script MT'";
-            crc2.fillText(`Einnahmen: ${Kunde.totalEarnings}€`, x + 10, y + 35);
+            crc2.fillText(`Einnahmen: ${Kunde.totalEarnings.toFixed(2)}€`, x + 10, y + 35);
             crc2.restore();
         }
 
@@ -177,7 +177,7 @@ namespace Eisdiele {
                     this.hasGeneratedOrder = true;
                 } else if (this.state === "seating") {
                     this.state = "eating";
-                    setTimeout(() => this.setState("paying"), 20000); // 20 Sekunden essen
+                    setTimeout(() => this.setState("paying"), 10000); // 10 Sekunden essen
                 } else if (this.state === "paying") {
                     // Bleibt im Zustand "paying" und wartet auf Klick
                 } else if (this.state === "leaving") {
@@ -191,7 +191,7 @@ namespace Eisdiele {
         }
 
         private updateSmiley(): void {
-            if (this.waitingTime >= 10) {
+            if (this.waitingTime >= 6.5) {
                 this.smileyColor = "red";
             } else if (this.waitingTime >= 5) {
                 this.smileyColor = "orange";
@@ -285,7 +285,8 @@ namespace Eisdiele {
         }
 
         private showGameOverAlert(): void {
-            alert("Die Bestellung war falsch! Der Kunde ist gegangen! Starte von vorne.");
+            const earnings = Kunde.totalEarnings.toFixed(2);
+            alert(`Die Bestellung war falsch! Der Kunde ist gegangen! Du hast heute ${earnings}€ verdient. Starte von vorne und sehe wie weit du dich verbessern kannst...`);
             location.reload(); // Spiel neu starten
         }
 
@@ -336,8 +337,10 @@ namespace Eisdiele {
         }
 
         private handlePayment(): void {
-            if (this.smileyColor !== "red") {
+            if (this.smileyColor === "green") {
                 Kunde.totalEarnings += this.order.length;
+            } else if (this.smileyColor === "orange") {
+                Kunde.totalEarnings += this.order.length / 2;
             }
             this.setState("leaving");
         }

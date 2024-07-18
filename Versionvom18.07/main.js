@@ -13,7 +13,7 @@ var Eisdiele;
     });
     function startGame() {
         setInterval(gameLoop, 1000 / 40); // 40 FPS Game Loop
-        setInterval(spawnCustomer, 5000); // Spawn every 1 seconds for testing
+        setInterval(spawnCustomer, 4000); // Spawn zeit
     }
     function gameLoop() {
         crc2.clearRect(0, 0, crc2.canvas.width, crc2.canvas.height); // Clear the canvas
