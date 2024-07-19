@@ -1,6 +1,7 @@
 "use strict";
 var Eisdiele;
 (function (Eisdiele) {
+    //import { iceCreamFlavors } from './kunde'; // Pfad zu kunde.ts muss korrekt sein
     // Funktion zum Zeichnen des Hintergrunds
     function drawBackground(crc2) {
         crc2.save(); // Speichert den aktuellen Zustand des Canvas
@@ -40,13 +41,17 @@ var Eisdiele;
         crc2.lineWidth = 10; // Setzt die Dicke des Rahmens
         crc2.strokeRect(800, 800, 200, 200); // Zeichnet den Rahmen um den kleineren Tresen
         crc2.restore(); // Stellt den gespeicherten Zustand des Canvas wieder her
-        // Farben und Bezeichnungen für die vier Eissorten
+        // Farben und Bezeichnungen für die vier Eissorten---------------------------------------------------------------------------------------------
         const iceCreams = [
             { color: "#FFC0CB", label: "Himbeere" },
             { color: "#FFD700", label: "Mango" },
             { color: "#ADD8E6", label: "Blaubeere" },
             { color: "#90EE90", label: "Pistazie" }
         ];
+        //const iceCreams = iceCreamFlavors.map(flavor => ({
+        //    color: flavor.color,
+        //    label: flavor.name
+        //}));
         const rectWidth = 100; // Breite der Rechtecke
         const rectHeight = 50; // Höhe der Rechtecke
         const spacing = 10; // Abstand zwischen den Rechtecken
@@ -136,36 +141,6 @@ var Eisdiele;
         crc2.stroke(); // Zeichnet den Umriss des Mundes
         crc2.restore(); // Stellt den gespeicherten Zustand des Canvas wieder her
         crc2.save(); // Speichert den aktuellen Zustand des Canvas
-        // crc2.beginPath(); // Beginnt einen neuen Pfad
-        // crc2.arc(1130, 500, 50, 0, 2 * Math.PI); // Zeichnet das Smiley-Gesicht
-        // crc2.fillStyle = "green"; // Setzt die Farbe auf Grün
-        // crc2.fill(); // Füllt den Smiley
-        // crc2.stroke(); // Zeichnet den Umriss des Smiley
-        // crc2.beginPath(); // Beginnt einen neuen Pfad
-        // crc2.fillStyle = "black"; // Setzt die Farbe auf Schwarz
-        // crc2.arc(1110, 485, 5, 0, 2 * Math.PI); // Zeichnet das linke Auge
-        // crc2.arc(1125, 485, 5, 0, 2 * Math.PI); // Zeichnet das rechte Auge
-        // crc2.fill(); // Füllt die Augen
-        // crc2.beginPath(); // Beginnt einen neuen Pfad
-        // crc2.arc(1130, 500, 35, 0, Math.PI, false); // Zeichnet den lächelnden Mund
-        // crc2.strokeStyle = "black"; // Setzt die Farbe auf Schwarz
-        // crc2.stroke(); // Zeichnet den Umriss des Mundes
-        // crc2.restore(); // Stellt den gespeicherten Zustand des Canvas wieder her
-        // crc2.save(); // Speichert den aktuellen Zustand des Canvas
-        // crc2.beginPath(); // Beginnt einen neuen Pfad
-        // crc2.arc(1330, 500, 50, 0, 2 * Math.PI); // Zeichnet das Smiley-Gesicht
-        // crc2.fillStyle = "red"; // Setzt die Farbe auf Rot
-        // crc2.fill(); // Füllt den Smiley
-        // crc2.stroke(); // Zeichnet den Umriss des Smiley
-        // crc2.beginPath(); // Beginnt einen neuen Pfad
-        // crc2.fillStyle = "black"; // Setzt die Farbe auf Schwarz
-        // crc2.arc(1310, 485, 5, 0, 2 * Math.PI); // Zeichnet das linke Auge
-        // crc2.arc(1325, 485, 5, 0, 2 * Math.PI); // Zeichnet das rechte Auge
-        // crc2.fill(); // Füllt die Augen
-        // crc2.beginPath(); // Beginnt einen neuen Pfad
-        // crc2.arc(1330, 500, 35, 0, Math.PI, false); // Zeichnet den lächelnden Mund
-        // crc2.strokeStyle = "black"; // Setzt die Farbe auf Schwarz
-        // crc2.stroke(); // Zeichnet den Umriss des Mundes
         crc2.restore(); // Stellt den gespeicherten Zustand des Canvas wieder her
         crc2.save(); // Speichert den aktuellen Zustand des Canvas
         crc2.fillStyle = "#8B4513"; // Setzt die Farbe auf Braun
