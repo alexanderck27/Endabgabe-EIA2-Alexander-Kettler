@@ -22,6 +22,7 @@ namespace Eisdiele {
         private static customerQueue: Kunde[] = []; // Warteschlange für Kunden
         private moodInterval: any; // Timer für den Stimmungswechsel
         private hasGeneratedOrder: boolean = false; // Flag um zu prüfen, ob die Bestellung generiert wurde
+        public hasReceivedOrder: boolean = false; // Flag um zu prüfen, ob der Kunde seine Bestellung erhalten hat
         private static totalEarnings: number = 0; // Gesamteinnahmen
         private static selectedOrder: string[] = []; // Temporäre Bestellung, die vom Benutzer ausgewählt wird
         private static orderConfirmed: boolean = false; // Flag, um zu prüfen, ob die Bestellung bestätigt wurde
@@ -78,7 +79,7 @@ namespace Eisdiele {
             this.drawSelectedOrder(crc2); // Zeichne die temporäre Bestellung im Grid
             this.drawEarnings(crc2); // Zeichne den Einnahmenbereich
 
-            crc2.fillText(`Canvas Width: ${this.canvasWidth}`, 10, 10); // Verwende canvasWidth, um die Warnung zu vermeiden
+            //crc2.fillText(`Canvas Width: ${this.canvasWidth}`, 10, 10); // Verwende canvasWidth, um die Warnung zu vermeiden
         }
 
 
@@ -173,31 +174,33 @@ namespace Eisdiele {
 
 
 
-
-
-
+        // Methode zur Überprüfung, ob der Kunde seine Bestellung erhalten hat
+        public receiveOrder(): void {
+            this.hasReceivedOrder = true;
+        }
 
 
         // Methode zum Aktualisieren des Kunden
         public update(allCustomers: Kunde[]): void {
-            if (this.state === "entering" || this.state === "seating" || this.state === "leaving" || (this.state === "paying" && this.position.x !== this.target.x && this.position.y !== this.target.y)) {
-                this.moveTowardsTarget(allCustomers); // Bewege den Kunden zum Ziel
+            if (this.state === "entering" || this.state === "seating" || this.state === 
+           "leaving" || (this.state === "paying" && this.position.x !== this.target.x && 
+           this.position.y !== this.target.y)) {
+            this.moveTowardsTarget(allCustomers); // Bewege den Kunden zum Ziel
             }
             this.updateSmiley(); // Aktualisiere den Smiley
-
             // Überprüfe, ob die Bestellung bestätigt wurde und ändere den Zustand entsprechend
             if (this.state === "waiting" && Kunde.orderConfirmed) {
-                if (this.isOrderMatching()) { // Wenn die Bestellung übereinstimmt
-                    this.setState("seating"); // Setze den Zustand auf "seating"
-                    Kunde.orderConfirmed = false; // Setze die Bestätigung zurück
-                    Kunde.selectedOrder = []; // Leere die temporäre Bestellung
-
-                } else {
-                    Kunde.orderConfirmed = false; // Setze die Bestätigung zurück
-                    this.showGameOverAlert(); // Zeige die Game-Over-Nachricht
-                }
+            if (this.isOrderMatching()) { // Wenn die Bestellung übereinstimmt
+            this.setState("seating"); // Setze den Zustand auf "seating"
+            this.receiveOrder(); // Kunde hat die Bestellung erhalten
+            Kunde.orderConfirmed = false; // Setze die Bestätigung zurück
+            Kunde.selectedOrder = []; // Leere die temporäre Bestellung
+            } else {
+            Kunde.orderConfirmed = false; // Setze die Bestätigung zurück
+            this.showGameOverAlert(); // Zeige die Game-Over-Nachricht
             }
-        }
+            }
+           }
 
 
 
@@ -401,7 +404,7 @@ namespace Eisdiele {
         // Methode zum Anzeigen der Game-Over-Nachricht
         private showGameOverAlert(): void {
             const earnings = Kunde.totalEarnings.toFixed(2); // Formatiere die Einnahmen
-            alert(`Die Bestellung war falsch! Der Kunde ist gegangen! Du hast heute ${earnings}€ verdient. Starte von vorne und sehe wie weit du dich verbessern kannst...`);
+            alert(`Die Bestellung war falsch! Der Kunde ist gegangen! \nDu hast heute ${earnings}€ verdient.\nStarte von vorne und sehe wie weit du dich verbessern kannst...`);
             location.reload(); // Spiel neu starten
         }
 
@@ -479,8 +482,10 @@ namespace Eisdiele {
 
 
 
-    // Initialisiere die Event-Listener, wenn das Dokument geladen ist
+   // Initialisiere die Event-Listener, wenn das Dokument geladen ist
     document.addEventListener("DOMContentLoaded", () => {
-        Kunde.setupEventListeners();
-    });
+    alert("Willkommen zum Spiel: Eisdealer!\n\nZiel des Spiels: Bediene die Kunden und erhöhe die Tageseinnahmen.\n\nAnleitung:\n1. Kunden betreten den Laden und bestellen ihr Eis.\n2. Klicke auf die Eissorten auf dem Tresen, um die Bestellung zusammenzustellen.\n3. Bestätige die Bestellung, um sie dem Kunden zu geben.\n4. Der Kunde isst und kommt danach zur Kasse.\n5. Vermeide Fehler bei den Bestellungen, sonst verlierst du den Kunden.\n\nAber Achtung, der Andrang der Kunden nimmt langsam zu! Außerdem zahlen die Kunden weniger, wenn ihre Stimmung sinkt.\n\nAls kleiner Tip:\nDie Kunden sind sehr vergesslich, wenn du Kunden anklickst noch während sie essen, zahlen sie bei dir und nochmal an der Kasse!\n\nViel Spaß!");
+    Kunde.setupEventListeners();
+   });
+
 }

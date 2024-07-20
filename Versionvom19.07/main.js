@@ -44,7 +44,7 @@ var Eisdiele;
         const x = event.clientX - canvas.offsetLeft; // X-Position des Klicks
         const y = event.clientY - canvas.offsetTop; // Y-Position des Klicks
         for (const customer of allCustomers) { // Überprüft, ob ein Kunde an der geklickten Position ist
-            if (isCustomerClicked(customer, x, y)) { // Wenn ja, ändere den Zustand des Kunden
+            if (isCustomerClicked(customer, x, y) && customer.getState() !== "waiting") { // Wenn ja, ändere den Zustand des Kunden außer er wartet
                 if (customer.getState() === "waiting") {
                     customer.setState("ordering");
                     customer.generateOrder(); // Generiere eine Bestellung

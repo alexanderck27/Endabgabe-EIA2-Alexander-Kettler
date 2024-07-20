@@ -20,6 +20,7 @@ var Eisdiele;
         static customerQueue = []; // Warteschlange für Kunden
         moodInterval; // Timer für den Stimmungswechsel
         hasGeneratedOrder = false; // Flag um zu prüfen, ob die Bestellung generiert wurde
+        hasReceivedOrder = false; // Flag um zu prüfen, ob der Kunde seine Bestellung erhalten hat
         static totalEarnings = 0; // Gesamteinnahmen
         static selectedOrder = []; // Temporäre Bestellung, die vom Benutzer ausgewählt wird
         static orderConfirmed = false; // Flag, um zu prüfen, ob die Bestellung bestätigt wurde
@@ -62,7 +63,7 @@ var Eisdiele;
             }
             this.drawSelectedOrder(crc2); // Zeichne die temporäre Bestellung im Grid
             this.drawEarnings(crc2); // Zeichne den Einnahmenbereich
-            crc2.fillText(`Canvas Width: ${this.canvasWidth}`, 10, 10); // Verwende canvasWidth, um die Warnung zu vermeiden
+            //crc2.fillText(`Canvas Width: ${this.canvasWidth}`, 10, 10); // Verwende canvasWidth, um die Warnung zu vermeiden
         }
         // Methode zum Zeichnen der Bestellung des Kunden
         drawOrder(crc2) {
@@ -125,9 +126,15 @@ var Eisdiele;
             crc2.fillText(`Einnahmen: ${Kunde.totalEarnings.toFixed(2)}€`, x + 10, y + 35);
             crc2.restore();
         }
+        // Methode zur Überprüfung, ob der Kunde seine Bestellung erhalten hat
+        receiveOrder() {
+            this.hasReceivedOrder = true;
+        }
         // Methode zum Aktualisieren des Kunden
         update(allCustomers) {
-            if (this.state === "entering" || this.state === "seating" || this.state === "leaving" || (this.state === "paying" && this.position.x !== this.target.x && this.position.y !== this.target.y)) {
+            if (this.state === "entering" || this.state === "seating" || this.state ===
+                "leaving" || (this.state === "paying" && this.position.x !== this.target.x &&
+                this.position.y !== this.target.y)) {
                 this.moveTowardsTarget(allCustomers); // Bewege den Kunden zum Ziel
             }
             this.updateSmiley(); // Aktualisiere den Smiley
@@ -135,6 +142,7 @@ var Eisdiele;
             if (this.state === "waiting" && Kunde.orderConfirmed) {
                 if (this.isOrderMatching()) { // Wenn die Bestellung übereinstimmt
                     this.setState("seating"); // Setze den Zustand auf "seating"
+                    this.receiveOrder(); // Kunde hat die Bestellung erhalten
                     Kunde.orderConfirmed = false; // Setze die Bestätigung zurück
                     Kunde.selectedOrder = []; // Leere die temporäre Bestellung
                 }
@@ -272,7 +280,7 @@ var Eisdiele;
         // Methode zum Anzeigen der Game-Over-Nachricht
         showGameOverAlert() {
             const earnings = Kunde.totalEarnings.toFixed(2); // Formatiere die Einnahmen
-            alert(`Die Bestellung war falsch! Der Kunde ist gegangen! Du hast heute ${earnings}€ verdient. Starte von vorne und sehe wie weit du dich verbessern kannst...`);
+            alert(`Die Bestellung war falsch! Der Kunde ist gegangen! \nDu hast heute ${earnings}€ verdient.\nStarte von vorne und sehe wie weit du dich verbessern kannst...`);
             location.reload(); // Spiel neu starten
         }
         // Event-Listener für Klicks auf die Eissorten, die Bestätigungs- und Abbruch-Buttons und die Smilies
@@ -328,6 +336,7 @@ var Eisdiele;
     Eisdiele.Kunde = Kunde;
     // Initialisiere die Event-Listener, wenn das Dokument geladen ist
     document.addEventListener("DOMContentLoaded", () => {
+        alert("Willkommen zum Spiel: Eisdealer!\n\nZiel des Spiels: Bediene die Kunden und erhöhe die Tageseinnahmen.\n\nAnleitung:\n1. Kunden betreten den Laden und bestellen ihr Eis.\n2. Klicke auf die Eissorten auf dem Tresen, um die Bestellung zusammenzustellen.\n3. Bestätige die Bestellung, um sie dem Kunden zu geben.\n4. Der Kunde isst und kommt danach zur Kasse.\n5. Vermeide Fehler bei den Bestellungen, sonst verlierst du den Kunden.\n\nAber Achtung, der Andrang der Kunden nimmt langsam zu! Außerdem zahlen die Kunden weniger, wenn ihre Stimmung sinkt.\n\nAls kleiner Tip:\nDie Kunden sind sehr vergesslich, wenn du Kunden anklickst noch während sie essen, zahlen sie bei dir und nochmal an der Kasse!\n\nViel Spaß!");
         Kunde.setupEventListeners();
     });
 })(Eisdiele || (Eisdiele = {}));
