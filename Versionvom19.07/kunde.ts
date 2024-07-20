@@ -32,7 +32,7 @@ namespace Eisdiele {
         // Konstruktor für den Kunden
         constructor(position: { x: number, y: number }, velocity: { x: number, y: number }, private canvasWidth: number, private canvasHeight: number) {
             super(position, velocity);
-            this.target = { x: canvasWidth / 1.7, y: canvasHeight / 2 };
+            this.target = { x: this.canvasWidth / 1.7, y: this.canvasHeight / 2 };
             Kunde.customerQueue.push(this);
             this.startMoodTimer(); // Starte den Timer für den Stimmungswechsel
         }

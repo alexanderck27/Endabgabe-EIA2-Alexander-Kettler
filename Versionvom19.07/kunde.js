@@ -29,7 +29,7 @@ var Eisdiele;
             super(position, velocity);
             this.canvasWidth = canvasWidth;
             this.canvasHeight = canvasHeight;
-            this.target = { x: canvasWidth / 1.7, y: canvasHeight / 2 };
+            this.target = { x: this.canvasWidth / 1.7, y: this.canvasHeight / 2 };
             Kunde.customerQueue.push(this);
             this.startMoodTimer(); // Starte den Timer für den Stimmungswechsel
         }
