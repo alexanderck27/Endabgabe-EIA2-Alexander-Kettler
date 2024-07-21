@@ -1,7 +1,6 @@
 namespace Eisdiele {
     
-    //import { iceCreamFlavors } from './kunde'; // Pfad zu kunde.ts muss korrekt sein
-
+   
     // Interface für alle Objekte, die gezeichnet werden können
     export interface Drawable {
         draw(crc2: CanvasRenderingContext2D): void; // Zeichnen-Methode, die den Canvas-Kontext als Parameter erhält
@@ -15,8 +14,8 @@ namespace Eisdiele {
         const cols = Math.ceil(crc2.canvas.width / size); // Anzahl der Spalten, die benötigt werden, um den Canvas zu füllen
 
         // Schleife über alle Reihen
-        for (let row = 0; row < rows; row++) {
-            // Schleife über alle Spalten
+        for (let row = 0; row < rows; row++) { // Schleife über alle Spalten
+            
             for (let col = 0; col < cols; col++) {
                 crc2.fillStyle = (row + col) % 2 === 0 ? "#ffffff" : "#000000"; // Setzt die Farbe abwechselnd auf Schwarz und Weiß
                 crc2.fillRect(col * size, row * size, size, size); // Zeichnet ein Quadrat
@@ -53,7 +52,7 @@ namespace Eisdiele {
         crc2.strokeRect(800, 800, 200, 200); // Zeichnet den Rahmen um den kleineren Tresen
         crc2.restore(); // Stellt den gespeicherten Zustand des Canvas wieder her
 
-        // Farben und Bezeichnungen für die vier Eissorten---------------------------------------------------------------------------------------------
+        // ------------------------------------------------------------------Farben und Bezeichnungen für die vier Eissorten---------------------------------------------------------------------------------------------
         const iceCreams = [
             { color: "#FFC0CB", label: "Himbeere"},
             { color: "#FFD700", label: "Mango" },

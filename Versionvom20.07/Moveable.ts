@@ -1,4 +1,5 @@
 namespace Eisdiele {
+    
     export abstract class Moveable implements Drawable {
         protected position: { x: number, y: number };
         protected velocity: { x: number, y: number };
